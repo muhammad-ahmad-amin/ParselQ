@@ -18,9 +18,7 @@ os.makedirs(CSV_DIR, exist_ok=True)
 
 SAVE_PLOT_PATH = os.path.join(PLOT_DIR, "dataset_overview.pdf")
 
-# ----------------------------
-# LOAD DATA
-# ----------------------------
+
 def load_jsonl(path):
     data = []
     with open(path, "r", encoding="utf-8") as f:
@@ -38,9 +36,7 @@ dev_data = load_jsonl(DEV_PATH)
 
 print(f"Loaded {len(train_data)} train samples, {len(dev_data)} dev samples.\n")
 
-# ----------------------------
-# BASIC COUNTS
-# ----------------------------
+
 def count_aspects(data):
     total_aspects = 0
     empty_aspects = 0
@@ -70,11 +66,9 @@ with open(overview_csv, "w", newline="", encoding="utf-8") as f:
     w.writerow(["Posts with 0 aspects", train_empty, dev_empty])
 
 
-print("\n✔ Saved:", overview_csv)
+print("\n Saved:", overview_csv)
 
-# ----------------------------
-# EXAMPLE ENTRIES (CSV)
-# ----------------------------
+
 example_csv = os.path.join(CSV_DIR, "example_entries.csv")
 with open(example_csv, "w", newline="", encoding="utf-8") as f:
     w = csv.writer(f)
@@ -85,9 +79,7 @@ with open(example_csv, "w", newline="", encoding="utf-8") as f:
 print("✔ Saved:", example_csv)
 
 
-# ----------------------------
-# VALIDATION CHECKS (CSV)
-# ----------------------------
+
 def run_validation(data, name):
     missing_text = sum(1 for d in data if not d.get("text"))
     missing_aspects = sum(1 for d in data if "aspects" not in d)
@@ -110,9 +102,7 @@ run_validation(train_data, "TRAIN")
 run_validation(dev_data, "DEV")
 
 
-# ----------------------------
-# ASPECT STATISTICS CSV
-# ----------------------------
+
 aspect_counter_train = Counter()
 aspect_counter_dev = Counter()
 
@@ -134,9 +124,7 @@ with open(aspect_csv, "w", newline="", encoding="utf-8") as f:
 print("✔ Saved:", aspect_csv)
 
 
-# ----------------------------
-# PLOT (Dataset Size)
-# ----------------------------
+
 plt.figure(figsize=(6, 4))
 plt.bar(["Train", "Dev"], [len(train_data), len(dev_data)])
 plt.ylabel("Number of Samples")
