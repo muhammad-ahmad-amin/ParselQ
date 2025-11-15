@@ -1,0 +1,21 @@
+Bigram,Count
+"('climate', 'change')",76
+"('nuclear', 'energy')",76
+"('clean', 'energy')",66
+"('coal', 'plants')",19
+"('power', 'plants')",19
+"('seems', 'like')",15
+"('nuclear', 'power')",14
+"('coal', 'power')",11
+"('closing', 'coal')",9
+"('nuclear', 'plants')",9
+"('shut', 'coal')",8
+"('use', 'nuclear')",8
+"('long', 'time')",7
+"('fossil', 'fuels')",7
+"('electric', 'vehicles')",7
+"('long', 'term')",7
+"('makes', 'sense')",6
+"('clean', 'air')",6
+"('short', 'term')",6
+"('regulatory', 'process')",6

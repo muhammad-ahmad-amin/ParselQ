@@ -1,0 +1,21 @@
+Bigram,Count
+"('climate', 'change')",225
+"('nuclear', 'energy')",204
+"('clean', 'energy')",200
+"('electric', 'vehicles')",150
+"('environmental', 'protection')",146
+"('protection', 'agency')",136
+"('environmental', 'awareness')",69
+"('power', 'plants')",55
+"('coal', 'plants')",51
+"('shut', 'coal')",47
+"('coal', 'plant')",39
+"('nuclear', 'power')",34
+"('coal', 'fired')",32
+"('fired', 'power')",28
+"('show', 'thread')",27
+"('power', 'plant')",26
+"('u', 'environmental')",23
+"('plants', 'shut')",23
+"('agency', 'epa')",22
+"('coal', 'power')",20

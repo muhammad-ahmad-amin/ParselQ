@@ -1,0 +1,21 @@
+Trigram,Count
+"('coal', 'power', 'plants')",8
+"('closing', 'coal', 'plants')",6
+"('nuclear', 'power', 'plants')",6
+"('use', 'nuclear', 'energy')",6
+"('clean', 'energy', 'going')",6
+"('three', 'nuclear', 'power')",5
+"('fight', 'climate', 'change')",4
+"('problem', 'nuclear', 'energy')",4
+"('coal', 'fired', 'power')",4
+"('fired', 'power', 'plants')",4
+"('clean', 'air', 'act')",4
+"('climate', 'change', 'pretty')",4
+"('change', 'pretty', 'good')",4
+"('clean', 'energy', 'future')",4
+"('denying', 'climate', 'change')",4
+"('misinformation', 'three', 'nuclear')",3
+"('power', 'plants', 'left')",3
+"('plants', 'left', 'online')",3
+"('left', 'online', 'right')",3
+"('online', 'right', 'scheduled')",3

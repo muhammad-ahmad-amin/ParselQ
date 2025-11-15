@@ -1,0 +1,21 @@
+Trigram,Count
+"('environmental', 'protection', 'agency')",136
+"('coal', 'fired', 'power')",26
+"('u', 'environmental', 'protection')",23
+"('protection', 'agency', 'epa')",22
+"('shut', 'coal', 'plants')",18
+"('fired', 'power', 'plant')",15
+"('transition', 'clean', 'energy')",15
+"('coal', 'power', 'plants')",13
+"('fired', 'power', 'plants')",13
+"('nuclear', 'power', 'plants')",12
+"('shut', 'coal', 'fired')",12
+"('clean', 'energy', 'future')",11
+"('years', 'ahead', 'schedule')",10
+"('use', 'nuclear', 'energy')",9
+"('awareness', 'environmental', 'issues')",9
+"('power', 'plants', 'shut')",9
+"('coal', 'plants', 'shut')",8
+"('clean', 'water', 'act')",7
+"('defense', 'production', 'act')",7
+"('us', 'environmental', 'protection')",7
