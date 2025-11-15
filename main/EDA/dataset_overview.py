@@ -4,9 +4,9 @@ from collections import Counter
 import os
 import csv
 
-# ----------------------------
-# CONFIGURATION
-# ----------------------------
+# ----------------------------------------------------
+# PATHS
+# ----------------------------------------------------
 TRAIN_PATH = "task-dataset/track_b/subtask_1/eng/eng_environmental_protection_train_task1.jsonl"
 DEV_PATH   = "task-dataset/track_b/subtask_1/eng/eng_environmental_protection_dev_task1.jsonl"
 
@@ -16,46 +16,40 @@ CSV_DIR = "main/csv"
 os.makedirs(PLOT_DIR, exist_ok=True)
 os.makedirs(CSV_DIR, exist_ok=True)
 
-SAVE_PLOT_PATH = os.path.join(PLOT_DIR, "dataset_overview.pdf")
 
-
+# ----------------------------------------------------
+# LOAD JSONL
+# ----------------------------------------------------
 def load_jsonl(path):
     data = []
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
             try:
                 data.append(json.loads(line))
-            except:
-                print(f"Skipping broken line in {path}")
+            except Exception as e:
+                print(f"Skipping broken line in {path}: {e}")
     return data
 
-
-print("Loading dataset...")
 train_data = load_jsonl(TRAIN_PATH)
 dev_data = load_jsonl(DEV_PATH)
 
-print(f"Loaded {len(train_data)} train samples, {len(dev_data)} dev samples.\n")
+
+# ----------------------------------------------------
+# BASIC STATS
+# ----------------------------------------------------
+def aspect_stats(data):
+    total_aspects = sum(len(d.get("aspects", [])) for d in data)
+    empty_posts   = sum(1 for d in data if len(d.get("aspects", [])) == 0)
+    avg_aspects   = total_aspects / len(data) if len(data) else 0
+    return total_aspects, avg_aspects, empty_posts
+
+train_aspects, train_avg, train_empty = aspect_stats(train_data)
+dev_aspects, dev_avg, dev_empty = aspect_stats(dev_data)
 
 
-def count_aspects(data):
-    total_aspects = 0
-    empty_aspects = 0
-
-    for entry in data:
-        aspects = entry.get("aspects", [])
-        if len(aspects) == 0:
-            empty_aspects += 1
-        total_aspects += len(aspects)
-
-    avg_aspects = total_aspects / len(data) if len(data) > 0 else 0
-    return total_aspects, avg_aspects, empty_aspects
-
-
-train_aspects, train_avg, train_empty = count_aspects(train_data)
-dev_aspects, dev_avg, dev_empty = count_aspects(dev_data)
-
-
-# SAVE DATASET OVERVIEW CSV
+# ----------------------------------------------------
+# CSV 1 — DATASET OVERVIEW
+# ----------------------------------------------------
 overview_csv = os.path.join(CSV_DIR, "dataset_overview.csv")
 with open(overview_csv, "w", newline="", encoding="utf-8") as f:
     w = csv.writer(f)
@@ -63,74 +57,120 @@ with open(overview_csv, "w", newline="", encoding="utf-8") as f:
     w.writerow(["Samples", len(train_data), len(dev_data)])
     w.writerow(["Total Aspects", train_aspects, dev_aspects])
     w.writerow(["Avg Aspects", train_avg, dev_avg])
-    w.writerow(["Posts with 0 aspects", train_empty, dev_empty])
+    w.writerow(["Zero-Aspect Posts", train_empty, dev_empty])
+print("✔ Saved:", overview_csv)
 
 
-print("\n Saved:", overview_csv)
-
-
-example_csv = os.path.join(CSV_DIR, "example_entries.csv")
-with open(example_csv, "w", newline="", encoding="utf-8") as f:
-    w = csv.writer(f)
-    w.writerow(["Index", "Text", "Aspects"])
-    for i, ex in enumerate(train_data[:5]):
-        w.writerow([i+1, ex.get("text", ""), ";".join(ex.get("aspects", []))])
-
-print("✔ Saved:", example_csv)
-
-
-
-def run_validation(data, name):
-    missing_text = sum(1 for d in data if not d.get("text"))
-    missing_aspects = sum(1 for d in data if "aspects" not in d)
-    wrong_format = sum(
-        1 for d in data if "aspects" in d and not isinstance(d["aspects"], list)
-    )
-
-    csv_path = os.path.join(CSV_DIR, f"validation_{name.lower()}.csv")
-    with open(csv_path, "w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
-        w.writerow(["Error Type", "Count"])
-        w.writerow(["Missing Text", missing_text])
-        w.writerow(["Missing 'Aspects' Field", missing_aspects])
-        w.writerow(["Non-list 'Aspects' Format", wrong_format])
-
-    print(f"✔ Saved validation CSV for {name}:", csv_path)
-
-
-run_validation(train_data, "TRAIN")
-run_validation(dev_data, "DEV")
-
-
-
+# ----------------------------------------------------
+# ASPECT COUNTERS (TRAIN & DEV)
+# ----------------------------------------------------
 aspect_counter_train = Counter()
-aspect_counter_dev = Counter()
+aspect_counter_dev   = Counter()
 
-for entry in train_data:
-    for a in entry.get("aspects", []):
+for d in train_data:
+    for a in d.get("aspects", []):
         aspect_counter_train[a] += 1
 
-for entry in dev_data:
-    for a in entry.get("aspects", []):
+for d in dev_data:
+    for a in d.get("aspects", []):
         aspect_counter_dev[a] += 1
 
+
+# ----------------------------------------------------
+# CSV 2 — ASPECT STATS
+# ----------------------------------------------------
 aspect_csv = os.path.join(CSV_DIR, "aspect_stats.csv")
 with open(aspect_csv, "w", newline="", encoding="utf-8") as f:
     w = csv.writer(f)
     w.writerow(["Aspect", "Train Count", "Dev Count"])
-    for asp in sorted(set(list(aspect_counter_train) + list(aspect_counter_dev))):
-        w.writerow([asp, aspect_counter_train.get(asp, 0), aspect_counter_dev.get(asp, 0)])
-
+    all_aspects = sorted(set(aspect_counter_train) | set(aspect_counter_dev))
+    for a in all_aspects:
+        w.writerow([a, aspect_counter_train.get(a, 0), aspect_counter_dev.get(a, 0)])
 print("✔ Saved:", aspect_csv)
 
 
+# ----------------------------------------------------
+# CSV 3 — VALIDATION CHECKS
+# ----------------------------------------------------
+missing_text_train = sum(1 for d in train_data if not d.get("text"))
+missing_aspects_train = sum(1 for d in train_data if "aspects" not in d)
+wrong_format_train = sum(1 for d in train_data if "aspects" in d and not isinstance(d.get("aspects"), list))
 
-plt.figure(figsize=(6, 4))
+with open(os.path.join(CSV_DIR, "validation.csv"), "w", newline="", encoding="utf-8") as f:
+    w = csv.writer(f)
+    w.writerow(["Error Type", "Train Count"])
+    w.writerow(["Missing Text", missing_text_train])
+    w.writerow(["Missing 'Aspects' Field", missing_aspects_train])
+    w.writerow(["Non-list 'Aspects'", wrong_format_train])
+print("✔ Saved:", os.path.join(CSV_DIR, "validation.csv"))
+
+
+# ----------------------------------------------------
+# PLOTTING UTIL
+# ----------------------------------------------------
+def save_plot(fig, name):
+    path = os.path.join(PLOT_DIR, name)
+    fig.savefig(path, bbox_inches="tight")
+    plt.close(fig)
+    print("✔ Plot saved:", path)
+
+
+# ----------------------------------------------------
+# PLOT 1 — DATASET SIZE
+# ----------------------------------------------------
+fig = plt.figure(figsize=(7, 5))
 plt.bar(["Train", "Dev"], [len(train_data), len(dev_data)])
-plt.ylabel("Number of Samples")
 plt.title("Dataset Size: Train vs Dev")
+plt.ylabel("Number of Posts")
+save_plot(fig, "dataset_size.pdf")
 
-plt.savefig(SAVE_PLOT_PATH, bbox_inches="tight")
-plt.close()
 
-print(f"\nSaved plot to {SAVE_PLOT_PATH}")
+# ----------------------------------------------------
+# PLOT 2 — HISTOGRAM OF ASPECT COUNTS
+# ----------------------------------------------------
+train_counts = [len(d.get("aspects", [])) for d in train_data]
+dev_counts = [len(d.get("aspects", [])) for d in dev_data]
+
+fig = plt.figure(figsize=(7, 5))
+plt.hist(train_counts, bins=10, alpha=0.6, label=f"Train (n={len(train_data)})")
+plt.hist(dev_counts, bins=10, alpha=0.6, label=f"Dev (n={len(dev_data)})")
+plt.xlabel("Number of Aspects")
+plt.ylabel("Frequency")
+plt.title("Histogram: Aspects Per Post")
+plt.legend()
+save_plot(fig, "aspect_histogram.pdf")
+
+
+# ----------------------------------------------------
+# PLOT 3 — ZERO VS NON-ZERO ASPECT POSTS (Train & Dev)
+# Fixed: produces two pies, handles zero-count edge cases,
+# and shows both absolute counts and percentages.
+# ----------------------------------------------------
+def pie_counts_and_labels(zero_count, total_count):
+    nonzero = total_count - zero_count
+    sizes = [zero_count, nonzero]
+    labels = [f"Zero Aspects ({zero_count})", f"Has Aspects ({nonzero})"]
+    return sizes, labels
+
+# Train pie
+sizes, labels = pie_counts_and_labels(train_empty, len(train_data))
+fig = plt.figure(figsize=(7, 5))
+# If both sizes are zero (empty dataset), draw an empty placeholder
+if sum(sizes) == 0:
+    plt.text(0.5, 0.5, "No data", ha="center", va="center")
+else:
+    plt.pie(sizes, labels=labels, autopct=lambda pct: f"{pct:.1f}%\n({int(round(pct/100*sum(sizes)))})")
+plt.title("Train: Zero vs Non-Zero Aspect Posts")
+save_plot(fig, "zero_vs_nonzero_train.pdf")
+
+# Dev pie
+sizes, labels = pie_counts_and_labels(dev_empty, len(dev_data))
+fig = plt.figure(figsize=(7, 5))
+if sum(sizes) == 0:
+    plt.text(0.5, 0.5, "No data", ha="center", va="center")
+else:
+    plt.pie(sizes, labels=labels, autopct=lambda pct: f"{pct:.1f}%\n({int(round(pct/100*sum(sizes)))})")
+plt.title("Dev: Zero vs Non-Zero Aspect Posts")
+save_plot(fig, "zero_vs_nonzero_dev.pdf")
+
+
