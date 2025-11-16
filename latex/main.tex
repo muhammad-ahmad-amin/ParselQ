@@ -1,0 +1,270 @@
+\documentclass[12pt]{report}
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{booktabs}
+\geometry{margin=1in}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    pdfborder={0 0 0}  
+}
+
+\titleformat{\chapter}{\normalfont\huge\bfseries}{\thechapter}{1em}{}
+\setlength{\parskip}{8pt}
+
+\begin{document}
+
+% ---------------------------------------------------
+% TITLE PAGE
+% ---------------------------------------------------
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    {\Huge \textbf{Assignment 1}}\\[0.5cm]
+    {\LARGE \textbf{Dimensional Stance Analysis (ParselQ)}}\\[1cm]
+
+    \vspace{1.5cm}
+
+    {\Large \textbf{Group Members}}\\[0.5cm]
+    \large
+    Muhammad Ahmad Amin (502217)\\
+    Hassan Jamal (519530)\\
+    Haniya Farhan (492237)\\
+    Syeda Frozish Batool (501165)\\
+
+    \vfill
+    \Large Department of Computer Science\\
+    Faculty of Computing\\
+    National University of Sciences and Technology, Islamabad\\
+    \vspace{0.5cm}
+    {\large \today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+
+% ---------------------------------------------------
+% INTRODUCTION
+% ---------------------------------------------------
+\chapter{Introduction}
+
+This report presents the comprehensive Exploratory Data Analysis (EDA) for the project \textbf{Dimensional Stance Analysis (ParselQ)}, developed as part of Assignment 1.  
+The task focuses on understanding stance variations in an environmental protection dataset under Track B, Subtask 1.
+
+To complete the EDA efficiently, the work was divided equally among four group members. Each member was responsible for one major component as shown in the table below:
+
+\section*{Task Division Table}
+\begin{center}
+\begin{tabular}{|p{4cm}|p{6cm}|p{3cm}|}
+\hline
+\textbf{Member} & \textbf{Assigned Task} & \textbf{CMS ID} \\ \hline
+Muhammad Ahmad Amin & Textual Token-Level + Valence - Arousal Label Analysis& 502217 \\ \hline
+Hassan Jamal & Dataset Overview + Structure Validation& 519530 \\ \hline
+Haniya Farhan & Aspect Frequency + Label Behavior Analysis & 492237 \\ \hline
+Syeda Frozish Batool & Latex Report& 501165 \\ \hline
+\end{tabular}
+\end{center}
+
+The remaining chapters provide detailed explanations and allocated plot spaces for each part.
+
+\newpage
+
+
+
+% ---------------------------------------------------
+% PART 1
+% ---------------------------------------------------
+\chapter{Part 1: Dataset Structure, Validation, and Overview}
+
+\section{Detailed Explanation}
+
+This component establishes the foundation of the entire EDA by examining the raw dataset structure.  
+The dataset is provided in JSONL format, where each line represents a post containing textual content and a list of annotated stance aspects.  
+
+The key goals of this part include:  
+\begin{itemize}
+    \item Examining structural integrity of the dataset  
+    \item Identifying missing or malformed entries  
+    \item Computing essential statistics such as total aspects, average aspects per post, and missing fields  
+    \item Performing consistency checks for format, field types, and annotation validity  
+    \item Manually inspecting samples to ensure annotations align with text meaning  
+\end{itemize}
+
+This structural analysis ensures that later EDA steps do not suffer from hidden dataset inconsistencies, which can corrupt model training.
+\pagebreak
+
+
+\section{Plots}
+
+% ------- PLOT BOX 1 -------
+\vspace{0.5cm}
+\noindent
+\begin{center}
+\centering
+\includegraphics[width=0.8\textwidth]{plots/dataset_size.pdf}
+\end{center}
+
+% ------- PLOT BOX 2 -------
+\vspace{0.5cm}
+\noindent
+\begin{center}
+\centering
+\includegraphics[width=0.8\textwidth]{plots/zero_vs_nonzero_train.pdf}
+\end{center}
+
+\newpage
+
+
+% ---------------------------------------------------
+% PART 2
+% ---------------------------------------------------
+\chapter{Part 2: Textual Token Analysis}
+
+\section{Detailed Explanation}
+
+Linguistic analysis is essential for understanding the nature of textual content in stance detection tasks.  
+This part examines the token-level structure of the posts using NLTK.  
+
+The analyses conducted include:  
+\begin{itemize}
+    \item **Token length distribution:** identifies short vs. long posts and outliers  
+    \item **Vocabulary richness:** measures lexical uniqueness and domain specificity  
+    \item **Stopword frequency:** reveals conversational vs. formal tendencies  
+    \item **N-gram extraction:** uncovers commonly co-occurring terms hinting at stance framing  
+\end{itemize}
+
+These insights guide preprocessing decisions such as stemming, removal of stopwords, and handling of rare words.
+
+\pagebreak
+
+
+\section{Plots}
+
+% ------- PLOT BOX 1 -------
+\vspace{0.5cm}
+\noindent
+\begin{center}
+\centering
+\includegraphics[width=0.9\textwidth]{plots/token_length_distribution.pdf}
+\end{center}
+
+% ------- PLOT BOX 2 -------
+\vspace{0.5cm}
+\noindent
+\begin{center}
+\centering
+\includegraphics[width=0.9\textwidth]{plots/top_tokens.pdf}
+\end{center}
+
+\newpage
+
+
+% ---------------------------------------------------
+% PART 3
+% ---------------------------------------------------
+\chapter{Part 3: Aspect Distribution and Label Behavior}
+
+\section{Detailed Explanation}
+
+This segment dives into the stance aspects themselves — their frequency, distribution, and relationships.  
+This analysis is crucial because label imbalance directly affects classification performance.
+
+The following analyses were performed:  
+\begin{itemize}
+    \item **Aspect frequency distribution:** to identify dominant stance aspects  
+    \item **Skewness/imbalance detection:** to determine need for resampling or class weights  
+    \item **Aspect co-occurrence:** reveals relationships and frequently paired stance dimensions  
+    \item **Summary statistics:** aspects/post, variance, and distribution shape  
+\end{itemize}
+
+Understanding label behavior ensures a fair and robust downstream ML model.
+\pagebreak
+
+\section{Plots}
+
+% ------- PLOT BOX 1 -------
+\vspace{0.5cm}
+\noindent
+\begin{center}
+\centering
+\includegraphics[width=0.8\textwidth]{plots/va_vs_length.pdf}
+\end{center}
+
+% ------- PLOT BOX 2 -------
+\vspace{0.5cm}
+\noindent
+\begin{center}
+\centering
+\includegraphics[width=0.7\textwidth]{plots/aspect_histogram.pdf}
+\end{center}
+
+\newpage
+
+
+% ---------------------------------------------------
+% PART 4
+% ---------------------------------------------------
+\chapter{Part 4: Valence - Arousal Label Analysis}
+
+\section{Detailed Explanation}
+
+This part focuses on the valence and arousal (VA) labels, which are available **only in the training set**.  
+Visualizing these labels helps understand the emotional distribution of the dataset.  
+
+The insights include:  
+\begin{itemize}
+    \item Distribution of Valence scores  
+    \item Distribution of Arousal scores  
+    \item Relationship between Valence and Arousal (scatter plot)  
+    \item Correlation between Valence and Arousal  
+\end{itemize}
+
+These observations highlight whether the VA labels are balanced or skewed, whether texts are generally positive or negative, and the prevalence of high-arousal posts.  
+Such insights are crucial for designing models that effectively capture affective dimensions.
+\pagebreak
+
+\section{Plots}
+
+\vspace{0.5cm}
+\noindent
+\begin{center}
+\centering
+\includegraphics[width=0.6\textwidth]{plots/va_scatter.pdf}
+\end{center}
+
+\vspace{0.5cm}
+\noindent
+\begin{center}
+\centering
+\includegraphics[width=0.7\textwidth]{plots/arousal_distribution.pdf}
+\end{center}
+
+
+% ---------------------------------------------------
+% GITHUB LINK
+% ---------------------------------------------------
+\chapter*{GitHub Repository}
+\addcontentsline{toc}{chapter}{GitHub Repository}
+
+
+\vspace{1cm}
+\begin{center}
+\textbf{\Large \underline{(https://github.com/muhammad-ahmad-amin/ParselQ.git)}}
+\end{center}
+
+\vspace{1cm}
+
+\begin{center}
+\Large Thank You!
+\end{center}
+
+\end{document}
