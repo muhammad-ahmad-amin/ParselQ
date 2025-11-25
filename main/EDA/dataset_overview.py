@@ -105,9 +105,7 @@ with open(os.path.join(CSV_DIR, "validation.csv"), "w", newline="", encoding="ut
 print("✔ Saved:", os.path.join(CSV_DIR, "validation.csv"))
 
 
-# ----------------------------------------------------
-# PLOTTING UTIL
-# ----------------------------------------------------
+
 def save_plot(fig, name):
     path = os.path.join(PLOT_DIR, name)
     fig.savefig(path, bbox_inches="tight")
