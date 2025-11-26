@@ -64,7 +64,7 @@ class DataLoader:
 if __name__ == "__main__":
     loader = DataLoader(
         "main/csv/full_dataset_cleaned.csv", 
-        save_name="dataset_copy.csv"
+        save_name="loaded_data.csv"
     )
 
     df = loader.load_dataset()
