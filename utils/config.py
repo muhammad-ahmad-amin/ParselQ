@@ -99,7 +99,7 @@ class Config:
     def __str__(self):
         """Pretty print config"""
         lines = ["\n" + "="*60, "Configuration", "="*60]
-        for key, value in self.to_dict().items():
+    for key, value in self.to_dict().items():
             lines.append(f"  {key:.<30} {value}")
         lines.append("="*60 + "\n")
         return "\n".join(lines)
