@@ -1,0 +1,316 @@
+\documentclass[12pt]{report}
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{caption}
+\geometry{margin=1in}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    pdfborder={0 0 0}  
+}
+
+\titleformat{\chapter}{\normalfont\huge\bfseries}{\thechapter}{1em}{}
+\setlength{\parskip}{8pt}
+
+\begin{document}
+
+% ---------------------------------------------------
+% TITLE PAGE
+% ---------------------------------------------------
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    {\Huge \textbf{Assignment 2}}\\[0.5cm]
+    {\LARGE \textbf{Baseline Modeling for Dimensional Stance Analysis (ParselQ)}}\\[1cm]
+
+    \vspace{1.5cm}
+
+    {\Large \textbf{Group Members}}\\[0.5cm]
+    \large
+    Muhammad Ahmad Amin (502217)\\
+    Hassan Jamal (519530)\\
+    Haniya Farhan (492237)\\
+    Syeda Frozish Batool (501165)\\
+
+    \vfill
+    \Large Department of Computer Science\\
+    Faculty of Computing\\
+    National University of Sciences and Technology, Islamabad\\
+    \vspace{0.5cm}
+    {\large \today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+
+
+% ---------------------------------------------------
+% CHAPTER 1: INTRODUCTION
+% ---------------------------------------------------
+\chapter{Introduction}
+
+This report presents the complete baseline modeling and experimental framework for the project \textbf{Dimensional Stance Analysis (ParselQ)} under Track B, Subtask 1.  
+The objective is to build and evaluate different machine learning and deep learning baselines for stance prediction along multiple dimensions.
+
+In Assignment 1, the focus was Exploratory Data Analysis (EDA).  
+In Assignment 2, the goal shifts toward:
+
+\begin{itemize}
+    \item Designing baseline architectures.
+    \item Creating preprocessing pipelines.
+    \item Implementing and training the models.
+    \item Comparing performance across classical ML and Transformer-based baselines.
+    \item Reporting implementation details and runtime observations.
+\end{itemize}
+
+The following baselines were developed:
+
+\begin{enumerate}
+    \item \textbf{Baseline A: TF-IDF + Logistic Regression}
+    \item \textbf{Baseline B: Bi-LSTM (Neural RNN Model)}
+    \item \textbf{Baseline C: BERT-base (Transformer Fine-Tuning)}
+    \item \textbf{Baseline D: DistilBERT (Lightweight Transformer Model)}
+\end{enumerate}
+
+Each model includes:
+
+\begin{itemize}
+    \item Preprocessing pipeline
+    \item Model architecture description
+    \item Implementation details
+\end{itemize}
+
+
+
+% ---------------------------------------------------
+% TASK DIVISION
+% ---------------------------------------------------
+\chapter{Task Division}
+
+\begin{center}
+\begin{tabular}{|p{4cm}|p{7cm}|p{3cm}|}
+\hline
+\textbf{Member} & \textbf{Assigned Baseline Task (Assignment 2)} & \textbf{CMS ID} \\ \hline
+Muhammad Ahmad Amin & Baseline Model A (TF-IDF + Logistic Regression) + data_loader.py + preprocess.py& 502217 \\ \hline
+Hassan Jamal & Baseline Model B (Bi-LSTM) + train.py + LaTeX Compilation& 519530 \\ \hline
+Haniya Farhan & Baseline Model C (BERT-base Fine-tuning) & 492237 \\ \hline
+Syeda Frozish Batool & Baseline Model D (DistilBERT / RoBERTa-small) & 501165 \\ \hline
+\end{tabular}
+\end{center}
+
+\newpage
+
+
+
+
+% ---------------------------------------------------
+% CHAPTER 3: BASELINE MODEL A
+% ---------------------------------------------------
+\chapter{Baseline Model A: TF-IDF + Logistic Regression}
+
+\section{Overview}
+
+Baseline A represents the most fundamental machine learning pipeline and is used to establish a lower bound for performance.  
+The goal of this baseline is to understand how far a purely statistical, surface-level model can go without learning contextual semantics.  
+It relies entirely on TF-IDF features, meaning the model only captures word importance rather than deeper linguistic relationships.
+
+This baseline is useful because it is lightweight, interpretable, requires minimal training time, and provides quick feedback about data quality.  
+It also helps compare how much improvement advanced models provide over simple linear decision boundaries.
+
+\section{Pipeline Diagram (Placeholder)}
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.8\textwidth]{pieline_model_A.png}}
+    \caption{Pipeline for Baseline A (Insert diagram here)}
+\end{figure}
+
+\section{Model Architecture}
+
+\begin{itemize}
+    \item TF-IDF vectorizer (unigram + bigram features)
+    \item Logistic Regression classifier (one-vs-rest)
+\end{itemize}
+\section{Results and Visualization}
+
+\subsection{Performance Plot (Placeholder)}
+\begin{figure}[H]
+    \centering
+    \vspace{0.5cm}
+    \fbox{
+        \includegraphics[width=0.75\textwidth]{baselineA_results.pdf}
+    }
+    \caption{Performance plot for Baseline A }
+\end{figure}
+
+\newpage
+
+
+
+
+% ---------------------------------------------------
+% CHAPTER 4: BASELINE MODEL B — BI-LSTM
+% ---------------------------------------------------
+\chapter{Baseline Model B: Bi-LSTM (Recurrent Neural Network)}
+
+\section{Overview}
+
+Baseline B leverages a bidirectional LSTM, allowing the model to read text both forward and backward.  
+This enables the network to capture sequential patterns, long-range dependencies, and contextual clues that traditional bag-of-words models cannot detect.
+
+Unlike TF-IDF, which treats each sentence as a unordered collection of words, the Bi-LSTM learns semantic patterns, sentence structure, and token interactions over time.  
+This makes it especially useful for stance detection, where the ordering of words such as “not”, “however”, or “but” significantly impacts meaning.
+
+The model aims to provide a stronger deep learning baseline before transitioning to transformer-based architectures.
+
+\section{Pipeline Diagram (Placeholder)}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.8\textwidth]{pieline_model_B.png}}
+    \caption{Pipeline for Baseline B (Insert diagram here)}
+\end{figure}
+
+\section{Model Architecture}
+
+\begin{itemize}
+    \item Tokenization + padding
+    \item Embedding layer
+    \item Bidirectional LSTM
+    \item Dropout regularization
+    \item Dense layer + softmax output
+\end{itemize}
+
+\section{Implementation Notes}
+
+\begin{itemize}
+    \item Long sequences may require truncation
+    \item Learning rates must be tuned carefully to avoid instability
+    \item GPU training significantly accelerates model convergence
+\end{itemize}
+\section{Results and Visualization}
+
+\subsection{Performance Plot (Placeholder)}
+\begin{figure}[H]
+    \centering
+    \vspace{0.5cm}
+    \fbox{
+        \includegraphics[width=0.75\textwidth]{baseline_B_report.pdf}
+    }
+    \caption{Performance plot for Baseline B }
+\end{figure}
+
+\newpage
+
+
+
+
+% ---------------------------------------------------
+% CHAPTER 5: BASELINE MODEL C — BERT-BASE
+% ---------------------------------------------------
+\chapter{Baseline Model C: BERT-base Fine-Tuning}
+
+\section{Overview}
+
+Baseline C uses BERT-base, a 12-layer bidirectional Transformer model that learns deep contextual representations.  
+Unlike RNNs or TF-IDF-based models, BERT processes entire sentences simultaneously using self-attention, allowing it to understand relationships between tokens regardless of distance.
+
+This baseline is expected to produce major performance improvements, especially for tasks requiring subtle stance differentiation.  
+BERT captures sentiment shifts, sarcasm cues, topic relevance, and implicit opinions, making it ideal for nuanced classification problems like stance analysis.
+
+It also benefits from pretraining on massive corpora, enabling strong generalization even with limited labeled data.
+
+\section{Pipeline Diagram (Placeholder)}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.8\textwidth]{pieline_model_C.png}}
+    \caption{Pipeline for Baseline C (Insert diagram here)}
+\end{figure}
+
+\section{Model Architecture}
+
+\begin{itemize}
+    \item BERT tokenizer
+    \item Input IDs + attention masks
+    \item Pretrained BERT-base encoder
+    \item CLS pooled output → fully connected layer
+\end{itemize}
+
+\section{Implementation Notes}
+
+\begin{itemize}
+    \item GPU recommended due to heavy computation
+    \item Layer freezing can speed training
+    \item Proper mask handling crucial for padded inputs
+\end{itemize}
+
+\newpage
+
+
+
+
+% ---------------------------------------------------
+% CHAPTER 6: BASELINE MODEL D — DISTILBERT
+% ---------------------------------------------------
+\chapter{Baseline Model D: DistilBERT (Light Transformer Baseline)}
+
+\section{Overview}
+
+Baseline D implements DistilBERT, a distilled and compressed version of BERT that retains almost the same accuracy while being significantly faster.  
+It is designed to provide a middle ground between accuracy and computational efficiency, making it suitable for deployments or rapid experimentation.
+
+DistilBERT removes the larger BERT’s redundant layers while keeping most of its representational power.  
+This baseline tests whether a lightweight transformer can still achieve strong stance classification performance without the full computational overhead.
+
+It is especially useful when training time, hardware constraints, or memory limitations are major considerations.
+
+\section{Pipeline Diagram (Placeholder)}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.8\textwidth]{pieline_model_D.png}}
+    \caption{Pipeline for Baseline D (Insert diagram here)}
+\end{figure}
+
+\section{Model Architecture}
+
+\begin{itemize}
+    \item DistilBERT tokenizer
+    \item 6-layer transformer encoder
+    \item Classification head
+\end{itemize}
+
+
+
+
+
+
+
+
+\section{Conclusion}
+
+This assignment demonstrated the progressive improvement from classical ML models to advanced transformer-based baselines.  
+Future work includes hyperparameter tuning, data augmentation, and multi-label stance analysis.
+
+% ---------------------------------------------------
+% GITHUB REPOSITORY
+% ---------------------------------------------------
+\chapter*{GitHub Repository}
+\addcontentsline{toc}{chapter}{GitHub Repository}
+
+\begin{center}
+\fbox{\href{https://github.com/your-repo-link}{https://github.com/muhammad-ahmad-amin/ParselQ.git}}
+\end{center}
+
+\end{document}
