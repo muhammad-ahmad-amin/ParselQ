@@ -228,7 +228,7 @@ def train_model(model, train_loader, dev_loader, device, epochs=10, lr=1e-3, pat
     # =============================
     # Generate PDF REPORT
     # =============================
-    print("[+] Generating Baseline-A style PDF report...")
+    print("[+] Generating Baseline-B style PDF report...")
 
     y_true, y_pred = [], []
     model.eval()
