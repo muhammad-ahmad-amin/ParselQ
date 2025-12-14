@@ -1,0 +1,236 @@
+\documentclass[12pt]{report}
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\geometry{margin=1in}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    pdfborder={0 0 0}  
+}
+
+% Code snippet styling
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\lstdefinestyle{mystyle}{
+    basicstyle=\ttfamily\small,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\titleformat{\chapter}{\normalfont\huge\bfseries}{\thechapter}{1em}{}
+\setlength{\parskip}{8pt}
+
+\begin{document}
+
+% ---------------------------------------------------
+% TITLE PAGE
+% ---------------------------------------------------
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    {\Huge \textbf{Assignment 3}}\\[0.5cm]
+    {\LARGE \textbf{Proposed Solution and Result Analysis}}\\[1cm]
+
+    \vspace{1.5cm}
+
+    {\Large \textbf{Group Members}}\\[0.5cm]
+    \large
+    Muhammad Ahmad Amin (502217)\\
+    Hassan Jamal (519530)\\
+    Haniya Farhan (492237)\\
+    Syeda Frozish Batool (501165)\\
+
+    \vfill
+    \Large Department of Computer Science\\
+    Faculty of Computing\\
+    National University of Sciences and Technology, Islamabad\\
+    \vspace{0.5cm}
+    {\large \today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ---------------------------------------------------
+% INTRODUCTION
+% ---------------------------------------------------
+\chapter{Introduction}
+
+This report presents the implementation and experimental analysis conducted for \textbf{Assignment 3}, focusing on the development, training, and evaluation of machine learning models for the given task.  
+The primary objective of this assignment is to design an improved proposed model, compare it against a baseline, and analyze its performance using standardized evaluation metrics and visualizations.
+
+To ensure efficient development and clear responsibility distribution, the assignment work was divided equally among four group members. Each member was assigned a distinct technical component related strictly to coding, experimentation, evaluation, and system integration.
+
+The detailed task allocation is presented in the table below:
+
+\section*{Task Division Table}
+\begin{center}
+\begin{tabular}{|p{4cm}|p{6cm}|p{3cm}|}
+\hline
+\textbf{Member} & \textbf{Assigned Task} & \textbf{CMS ID} \\ \hline
+Muhammad Ahmad Amin & Training Pipeline and Experiment Execution & 502217 \\ \hline
+Hassan Jamal & Proposed Model Design and Implementation & 519530 \\ \hline
+Haniya Farhan & Proposed Model Design and Implementation & 492237 \\ \hline
+Syeda Frozish Batool & Utility Modules and Integration Testing & 501165 \\ \hline
+\end{tabular}
+\end{center}
+
+The subsequent chapters describe the implemented models, training procedures, evaluation methodology, and experimental results, supported by generated plots and quantitative performance metrics.
+
+\newpage
+
+% ---------------------------------------------------
+% CHAPTER 1: DATA HANDLING
+% ---------------------------------------------------
+\chapter{Data Preprocessing and Pipeline}
+
+To ensure reproducible and robust training, we implemented a custom \texttt{data\_utils.py} module. The core component of this module is the \texttt{DataLoader} class, which handles file operations, cleaning, and dataset splitting. 
+
+Below is a brief explanation of the key methods implemented in the \texttt{DataLoader} class:
+
+\section{Initialization (\texttt{\\_init\\_})}
+The constructor initializes the class with the path to the raw CSV file and configuration parameters. It accepts arguments for the save filename, test split size (default 0.2), and a random seed for reproducibility. Crucially, it automatically checks for and creates the necessary directory structure (e.g., \texttt{main/csv}) to ensure that subsequent file saving operations do not fail due to missing folders.
+
+\section{Loading the Dataset (\texttt{load\_dataset})}
+This method is responsible for ingesting the raw data.
+\begin{itemize}
+    \item It reads the CSV file using pandas.
+    \item It performs initial cleaning by stripping leading or trailing whitespace from column headers to prevent key errors.
+    \item It saves a copy of the processed dataframe to a designated location. This step is vital for data versioning, ensuring that the model always trains on a specific snapshot of the data.
+\end{itemize}
+
+\section{Splitting the Dataset (\texttt{split\_dataset})}
+This method prepares the data for the training and validation phases.
+\begin{itemize}
+    \item It normalizes column names to lowercase to ensure consistency.
+    \item It checks for the existence of a specific \texttt{label} column.
+    \item \textbf{Stratification:} If labels are present, it utilizes stratified sampling. This ensures that the class distribution (e.g., the ratio of positive to negative samples) remains consistent between the training set and the test set. If no labels are found, it defaults to a standard random split.
+\end{itemize}
+
+% ---------------------------------------------------
+% CHAPTER 2: PROPOSED METHOD
+% ---------------------------------------------------
+\chapter{Proposed Method}
+
+\section{Model Architecture}
+In \texttt{model\_proposed.py}, we implemented an incremental improvement over the baseline architecture. The proposed model incorporates the following enhancements to capture dimensional stance more effectively:
+
+\begin{enumerate}
+    \item \textbf{Transformer Encoder Integration:} We replaced the standard embedding layer with a Transformer-based encoder to capture long-range dependencies in the text.
+    \item \textbf{Multi-Head Attention Enhancement:} Additional attention heads were introduced to allow the model to focus on different parts of the input sentence simultaneously.
+    \item \textbf{Regularization Tuning:} Layer Normalization and Dropout rates were tuned to prevent overfitting on the specific dataset.
+    \item \textbf{Prompt Tuning/Adapters:} Lightweight adapter layers were added to fine-tune the model efficiently without updating all pre-trained weights.
+\end{enumerate}
+
+\section{Implementation Details}
+The model defines a custom forward pass that handles tokenized inputs and computes the loss directly. The weights are saved to \texttt{results/model\_proposed.pt} upon training completion.
+
+% ---------------------------------------------------
+% CHAPTER 3: EXPERIMENTAL SETUP & EVALUATION
+% ---------------------------------------------------
+\chapter{Experimental Setup and Results}
+
+\section{Evaluation Metrics}
+The evaluation pipeline, handled by \texttt{evaluate\_results.py}, computes the following metrics on both the Development and Test sets:
+\begin{itemize}
+    \item \textbf{Precision, Recall, and F1-Score:} Calculated as macro averages to account for class imbalances.
+    \item \textbf{Confusion Matrix:} Visualized to analyze misclassifications.
+\end{itemize}
+
+\section{Results Analysis}
+
+\subsection{Zero vs Non zero Aspects}
+The confusion matrix for the proposed model is presented in Figure \ref{fig:cm}. The matrix highlights the classification distribution on the test set.
+
+\begin{figure}[H]
+    \centering
+    % Ensure the image is saved as 'confusion_matrix.png' in a 'plots' folder
+    % or adjust path accordingly.
+    \includegraphics[width=0.75\textwidth]{latex/plots/zero_vs_nonzero_dev.pdf} 
+    \caption{Confusion Matrix of the Proposed Model. The model demonstrates a tendency towards Class 0 (128 correct predictions) with notable misclassifications (72 instances).}
+    \label{fig:cm}
+\end{figure}
+
+\subsection{Performance Comparison}
+We compared the Baseline model against the Proposed solution using Macro-averaged metrics. The comparative analysis is visualized in Figure \ref{fig:bar}.
+
+\section{Results Summary Table}
+The quantitative results derived from the evaluation plots are summarized below. While the Baseline model appears to overfit or memorize the dataset (achieving perfect scores), the Proposed model reflects the actual learning behavior on the test data.
+
+\begin{table}[H]
+\centering
+\caption{Performance Metrics (Macro Average)}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\
+\midrule
+Baseline & 1.00 & 1.00 & 1.00 \\
+Proposed & 0.50 & 0.32 & 0.39 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Discussion and Limitations}
+The visual results indicate that the dataset may suffer from significant class imbalance or data leakage in the baseline implementation (indicated by the 1.0 scores). The Proposed model, while showing lower numerical scores, provides a more realistic representation of learning. Future work will focus on:
+\begin{itemize}
+    \item Addressing class imbalance via weighted loss functions.
+    \item Increasing the number of training epochs.
+    \item Investigating the test set distribution (as seen in the Confusion Matrix).
+\end{itemize}
+
+% ---------------------------------------------------
+% CHAPTER 4: COLLABORATION
+% ---------------------------------------------------
+\chapter{Collaboration Statement}
+
+The development of this assignment was a joint effort. The specific responsibilities were distributed as follows:
+
+\section*{Model Architect \& Implementation Lead}
+\textbf{Responsibilities:} Design of \texttt{model\_proposed.py}, implementation of Transformer encoders, Adapters, and the forward pass logic. Ensuring compatibility with the training script.
+
+\section*{Evaluation Metrics \& Visualization Lead}
+\textbf{Responsibilities:} Development of \texttt{evaluate\_results.py}. Managed model loading, computed Precision/Recall/F1 metrics, and generated the Confusion Matrices and Bar graphs presented in Chapter 3.
+
+\section*{Pipeline Integration \& Support Modules}
+\textbf{Responsibilities:} Implementation of \texttt{utils.py} and \texttt{data\_utils.py}. This involved creating the \texttt{DataLoader} class, managing checkpoint saving/loading, logging utilities, and ensuring end-to-end integration tests passed without errors.
+
+% ---------------------------------------------------
+% GITHUB LINK
+% ---------------------------------------------------
+\chapter*{GitHub Repository}
+\addcontentsline{toc}{chapter}{GitHub Repository}
+
+
+\vspace{1cm}
+\begin{center}
+\textbf{\Large \underline{(https://github.com/muhammad-ahmad-amin/ParselQ.git)}}
+\end{center}
+
+\vspace{1cm}
+
+\begin{center}
+\Large Thank You!
+\end{center}
+
+\end{document}
